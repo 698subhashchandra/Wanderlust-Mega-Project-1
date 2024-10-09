@@ -1,0 +1,39 @@
+version: "3.8"
+services:
+  mongodb:
+    container_name: mongo-service
+    image: mongo:latest
+    volumes:
+      - ./backend/data:/data
+    ports:
+      - "27017:27017"
+
+  backend:
+    container_name: backend
+    build: ../Wanderlust-Mega-Project-1/backend
+    env_file:
+      - ../Wanderlust-Mega-Project-1/backend/.env.docker
+    ports:
+      - "31100:8080"
+    depends_on:
+      - mongodb
+
+  frontend:
+    container_name: frontend
+    build: ../Wanderlust-Mega-Project-1/frontend
+    env_file:
+      - ../Wanderlust-Mega-Project-1/frontend/.env.docker
+    ports:
+      - "5173:5173"
+
+  redis:
+    container_name: redis-service
+    restart: unless-stopped
+    image: redis:7.0.5-alpine 
+    expose:
+        - 6379
+    depends_on:
+      - mongodb
+
+volumes:
+  data:
